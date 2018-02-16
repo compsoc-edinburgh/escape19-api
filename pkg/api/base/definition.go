@@ -3,9 +3,11 @@ package base
 import (
 	"context"
 	"net/http"
+	"net/mail"
 	"regexp"
 
 	"github.com/badoux/checkmail"
+	"github.com/compsoc-edinburgh/infball-api/pkg/api/base"
 	"github.com/compsoc-edinburgh/infball-api/pkg/config"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -69,6 +71,12 @@ func CheckUUN(c *gin.Context, uun string) (success bool) {
 		checkEmail := uun + "@staffmail.ed.ac.uk"
 		if studentUUN.MatchString(uun) {
 			checkEmail = uun + "@sms.ed.ac.uk"
+		}
+
+		_, err := mail.ParseAddress(checkEmail)
+		if err != nil {
+			base.BadRequest(c, "Invalid uun provided. Please email infball@comp-soc.com if this is a mistake.")
+			return
 		}
 
 		err := checkmail.ValidateHost(checkEmail)
