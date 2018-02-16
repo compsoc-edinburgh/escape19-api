@@ -7,7 +7,6 @@ import (
 	"regexp"
 
 	"github.com/badoux/checkmail"
-	"github.com/compsoc-edinburgh/infball-api/pkg/api/base"
 	"github.com/compsoc-edinburgh/infball-api/pkg/config"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -75,11 +74,11 @@ func CheckUUN(c *gin.Context, uun string) (success bool) {
 
 		_, err := mail.ParseAddress(checkEmail)
 		if err != nil {
-			base.BadRequest(c, "Invalid uun provided. Please email infball@comp-soc.com if this is a mistake.")
+			BadRequest(c, "Invalid uun provided. Please email infball@comp-soc.com if this is a mistake.")
 			return
 		}
 
-		err := checkmail.ValidateHost(checkEmail)
+		err = checkmail.ValidateHost(checkEmail)
 		if smtpErr, ok := err.(checkmail.SmtpError); ok && err != nil && smtpErr.Code() == "550" {
 			BadRequest(c, "Unknown UUN. Staff should put in the username they use to log in with EASE, not their @ed.ac.uk alias.")
 			return
