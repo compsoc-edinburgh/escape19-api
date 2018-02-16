@@ -48,6 +48,11 @@ func (i *Impl) Post(c *gin.Context) {
 		return
 	}
 
+	if order.Meta["auth_token"] != result.AuthToken {
+		base.BadRequest(c, "Authorisation token does not match the code provided in your email.")
+		return
+	}
+
 	if !base.CheckUUN(c, result.UUN) {
 		return
 	}
@@ -55,11 +60,6 @@ func (i *Impl) Post(c *gin.Context) {
 	order, err := i.getOrder(result.OrderID)
 	if err != nil {
 		base.BadRequest(c, base.StripeError(err))
-		return
-	}
-
-	if order.Meta["auth_token"] != result.AuthToken {
-		base.BadRequest(c, "Authorisation token does not match the code provided in your email.")
 		return
 	}
 
