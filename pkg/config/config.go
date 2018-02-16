@@ -8,6 +8,9 @@ type Config struct {
 
 	// Bind Address
 	BindAddress string `default:"0.0.0.0:8080"`
+
+	// Mailgun
+	Mailgun MailgunConfig
 }
 
 // StripeConfig contains all configuration data for a CoSign connection
@@ -22,4 +25,10 @@ type StripeConfig struct {
 type Token struct {
 	Name string `required:"true"`
 	Key  string `required:"true"`
+}
+
+type MailgunConfig struct {
+	Domain       string `required:"true"`
+	APIKey       string `required:"true"`
+	PublicAPIKey string `required:"true"`
 }

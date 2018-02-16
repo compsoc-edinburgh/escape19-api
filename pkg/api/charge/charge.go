@@ -1,27 +1,16 @@
 package charge
 
 import (
-	"fmt"
 	"net/http"
-	"regexp"
 	"strconv"
 
 	"github.com/badoux/checkmail"
+	"github.com/compsoc-edinburgh/infball-api/pkg/api/base"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	stripe "github.com/stripe/stripe-go"
 	"github.com/stripe/stripe-go/currency"
 )
-
-var uunRegex = regexp.MustCompile(`(s\d{7}|[a-zA-Z]{2,})`)
-var studentUUN = regexp.MustCompile(`s\d{7}`)
-
-func badRequest(c *gin.Context, msg string) {
-	c.JSON(http.StatusBadRequest, gin.H{
-		"status":  "error",
-		"message": msg,
-	})
-}
 
 func isOneOf(one string, other ...string) bool {
 	for _, v := range other {
@@ -39,7 +28,7 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 		FullName    string
 		UUN         string
 		Email       string
-		Underage    bool
+		Over18      bool
 		Starter     string
 		Main        string
 		Dessert     string
@@ -47,50 +36,54 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 	}
 
 	if err := c.BindJSON(&result); err != nil {
-		badRequest(c, err.Error())
+		base.BadRequest(c, err.Error())
 		return
 	}
 
 	if result.Token == "" {
-		badRequest(c, "token missing")
+		base.BadRequest(c, "Stripe token missing.")
+		return
+	}
+
+	if !result.Over18 {
+		base.BadRequest(c, "You must be atleast 18 years of age to attend.")
 		return
 	}
 
 	if result.FullName == "" {
-		badRequest(c, "missing full name")
+		base.BadRequest(c, "Full name missing.")
 		return
 	}
 
-	if result.UUN != "" && uunRegex.MatchString(result.UUN) {
-		badRequest(c, "Invalid UUN. Please contact infball@comp-soc.com for assistance.")
+	if checkmail.ValidateFormat(result.Email) != nil {
+		base.BadRequest(c, "Invalid email format provided. Please email infball@comp-soc.com if this is a mistake.")
 		return
-	} else if result.UUN != "" {
-		checkEmail := result.UUN + "@staffmail.ed.ac.uk"
-		if studentUUN.MatchString(result.UUN) {
-			checkEmail = result.UUN + "@sms.ed.ac.uk"
-
-			err := checkmail.ValidateHost(checkEmail)
-			if smtpErr, ok := err.(checkmail.SmtpError); ok && err != nil && smtpErr.Code() == "550" {
-				fmt.Printf("Code: %s, Msg: %s", smtpErr.Code(), smtpErr)
-			}
-		}
 	}
 
-	if !isOneOf(result.Starter, "soup", "salmon", "pork") || !isOneOf(result.Main, "beef", "salmon", "chicken", "mushrooms") || !isOneOf(result.Dessert, "brownie") || !isOneOf(result.Dessert, "toffee") {
-		badRequest(c, "Invalid food selection.")
+	if !base.CheckUUN(c, result.UUN) {
+		return
+	}
+
+	if !isOneOf(result.Starter, "soup", "salmon", "pork") || !isOneOf(result.Main, "beef", "salmon", "chicken", "mushrooms") || !isOneOf(result.Dessert, "brownie", "toffee") {
+		base.BadRequest(c, "Invalid food selection.")
 		return
 	}
 
 	if len(result.SpecialReqs) > 500 {
-		badRequest(c, "Sorry, your request is limited to 500 characters. Please email infball@comp-soc.com for assistance.")
+		base.BadRequest(c, "Sorry, your request is limited to 500 characters. Please email infball@comp-soc.com for assistance.")
 		return
 	}
 
 	sku, err := i.Stripe.Skus.Get(i.Config.Stripe.SKU, nil)
 	if err != nil {
+		msg := err.Error()
+		if stripeErr, ok := err.(*stripe.Error); ok {
+			msg = stripeErr.Msg
+		}
+
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "error",
-			"message": err.(*stripe.Error).Msg,
+			"message": msg,
 		})
 		return
 	}
@@ -103,7 +96,7 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 		return
 	}
 
-	ticketID := uuid.New().String()
+	authToken := uuid.New().String()
 
 	order, err := i.Stripe.Orders.New(&stripe.OrderParams{
 		Currency: currency.GBP,
@@ -116,22 +109,30 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 		Params: stripe.Params{
 			Meta: map[string]string{
 				"uun":              result.UUN,
-				"email":            result.Email,
-				"underage":         strconv.FormatBool(result.Underage),
+				"purchaser_email":  result.Email,
+				"purchaser_name":   result.FullName,
+				"owner_email":      result.Email,
+				"owner_name":       result.FullName,
+				"over18":           strconv.FormatBool(result.Over18),
 				"meal_starter":     result.Starter,
 				"meal_main":        result.Main,
 				"meal_dessert":     result.Dessert,
 				"special_requests": result.SpecialReqs,
-				"id":               ticketID,
+				"auth_token":       authToken,
 			},
 		},
 		Email: result.Email,
 	})
 
 	if err != nil {
+		msg := err.Error()
+		if stripeErr, ok := err.(*stripe.Error); ok {
+			msg = stripeErr.Msg
+		}
+
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "error",
-			"message": err.(*stripe.Error).Msg,
+			"message": msg,
 		})
 		return
 	}
@@ -140,17 +141,28 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 	params := &stripe.OrderPayParams{}
 	params.SetSource(result.Token)
 
+	// Actually pay the user
 	o, err := i.Stripe.Orders.Pay(order.ID, params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  "error",
-			"message": err.(*stripe.Error).Msg,
-		})
+		msg := err.Error()
+		if stripeErr, ok := err.(*stripe.Error); ok {
+			msg = stripeErr.Msg
+		}
+
+		base.BadRequest(c, msg)
+		return
+	}
+
+	go i.Stripe.Charges.Update(o.Charge.ID, &stripe.ChargeParams{
+		Desc: "Informatics Ball Ticket",
+	})
+
+	if !base.SendTicketEmail(c, i.Mailgun, result.FullName, result.Email, o.ID, authToken) {
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": "success",
-		"data":   o,
+		"data":   o.ID,
 	})
 }
