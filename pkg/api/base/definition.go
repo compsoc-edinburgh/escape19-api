@@ -62,7 +62,7 @@ func StripeError(err error) string {
 // the above uun does not account for numbers in staff uuns (which is possible at the end)
 // and absolutely doesn't account for visitors (v1hreede)
 
-var studentUUN = regexp.MustCompile(`s\d{7}`)
+var studentUUN = regexp.MustCompile(`^s\d{7}$`)
 
 func CheckUUN(c *gin.Context, uun string) (success bool) {
 	if uun != "" {
