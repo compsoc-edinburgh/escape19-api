@@ -2,12 +2,12 @@ package ticket
 
 import (
 	"net/http"
+	"net/mail"
 	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/stripe/stripe-go"
 
-	"github.com/badoux/checkmail"
 	"github.com/compsoc-edinburgh/infball-api/pkg/api/base"
 	"github.com/gin-gonic/gin"
 )
@@ -43,7 +43,9 @@ func (i *Impl) Post(c *gin.Context) {
 		return
 	}
 
-	if checkmail.ValidateFormat(result.Email) != nil {
+	to_address := result.FullName + "<" + result.Email + ">"
+	_, err := mail.ParseAddress(to_address)
+	if err != nil {
 		base.BadRequest(c, "Invalid email format provided. Please email infball@comp-soc.com if this is a mistake.")
 		return
 	}
@@ -85,7 +87,7 @@ func (i *Impl) Post(c *gin.Context) {
 		return
 	}
 
-	if !base.SendTicketEmail(c, i.Mailgun, result.FullName, result.Email, order.ID, authToken) {
+	if !base.SendTicketEmail(c, i.Mailgun, result.FullName, to_address, order.ID, authToken) {
 		return
 	}
 

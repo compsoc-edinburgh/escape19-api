@@ -15,7 +15,7 @@ type EmailStruct struct {
 	OrderID   string
 }
 
-func SendTicketEmail(c *gin.Context, mailgun mailgun.Mailgun, name, email, orderID, authToken string) (_ bool) {
+func SendTicketEmail(c *gin.Context, mailgun mailgun.Mailgun, name, to_address, orderID, authToken string) (_ bool) {
 	var tpl bytes.Buffer
 	if err := Email.Execute(&tpl, EmailStruct{
 		Name:      name,
@@ -33,7 +33,7 @@ func SendTicketEmail(c *gin.Context, mailgun mailgun.Mailgun, name, email, order
 		"Informatics Ball <infball@comp-soc.com>",
 		"Your Informatics Ball ticket! [#"+orderID+"]",
 		"",
-		name+"<"+email+">",
+		to_address,
 	)
 	message.SetHtml(tpl.String())
 
