@@ -43,8 +43,8 @@ func (i *Impl) Post(c *gin.Context) {
 		return
 	}
 
-	to_address := result.FullName + "<" + result.Email + ">"
-	_, err := mail.ParseAddress(to_address)
+	toAddress := result.FullName + "<" + result.Email + ">"
+	_, err := mail.ParseAddress(toAddress)
 	if err != nil {
 		base.BadRequest(c, "Invalid email format provided. Please email infball@comp-soc.com if this is a mistake.")
 		return
@@ -87,7 +87,7 @@ func (i *Impl) Post(c *gin.Context) {
 		return
 	}
 
-	if !base.SendTicketEmail(c, i.Mailgun, result.FullName, to_address, order.ID, authToken) {
+	if !base.SendTicketEmail(c, i.Mailgun, result.FullName, toAddress, order.ID, authToken) {
 		return
 	}
 

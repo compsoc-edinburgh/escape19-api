@@ -2,9 +2,9 @@ package charge
 
 import (
 	"net/http"
+	"net/mail"
 	"strconv"
 
-	"github.com/badoux/checkmail"
 	"github.com/compsoc-edinburgh/infball-api/pkg/api/base"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -55,7 +55,9 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 		return
 	}
 
-	if checkmail.ValidateFormat(result.Email) != nil {
+	toAddress := result.FullName + "<" + result.Email + ">"
+	_, err := mail.ParseAddress(toAddress)
+	if err != nil {
 		base.BadRequest(c, "Invalid email format provided. Please email infball@comp-soc.com if this is a mistake.")
 		return
 	}
@@ -157,7 +159,7 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 		Desc: "Informatics Ball Ticket",
 	})
 
-	if !base.SendTicketEmail(c, i.Mailgun, result.FullName, result.Email, o.ID, authToken) {
+	if !base.SendTicketEmail(c, i.Mailgun, result.FullName, toAddress, o.ID, authToken) {
 		return
 	}
 
