@@ -58,7 +58,6 @@ func (i *Impl) Post(c *gin.Context) {
 		return
 	}
 
-	i.Log.Println(order.Meta["auth_token"], "-", result.AuthToken)
 	if order.Meta["auth_token"] != result.AuthToken {
 		base.BadRequest(c, "Authorisation token does not match the code provided in your email.")
 		return
