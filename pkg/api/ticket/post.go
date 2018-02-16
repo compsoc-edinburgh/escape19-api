@@ -91,6 +91,6 @@ func (i *Impl) Post(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": "success",
-		"data":   order.Meta,
+		"data":   true,
 	})
 }
