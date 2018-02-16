@@ -69,15 +69,15 @@ func CheckUUN(c *gin.Context, uun string) (success bool) {
 		checkEmail := uun + "@staffmail.ed.ac.uk"
 		if studentUUN.MatchString(uun) {
 			checkEmail = uun + "@sms.ed.ac.uk"
+		}
 
-			err := checkmail.ValidateHost(checkEmail)
-			if smtpErr, ok := err.(checkmail.SmtpError); ok && err != nil && smtpErr.Code() == "550" {
-				BadRequest(c, "Unknown UUN. Staff should put in the username they use to log in with EASE, not their @ed.ac.uk alias.")
-				return
-			} else if err != nil {
-				BadRequest(c, "Something went wrong with UUN validation. Please contact infball@comp-soc.com for assistance.")
-				return
-			}
+		err := checkmail.ValidateHost(checkEmail)
+		if smtpErr, ok := err.(checkmail.SmtpError); ok && err != nil && smtpErr.Code() == "550" {
+			BadRequest(c, "Unknown UUN. Staff should put in the username they use to log in with EASE, not their @ed.ac.uk alias.")
+			return
+		} else if err != nil {
+			BadRequest(c, "Something went wrong with UUN validation. Please contact infball@comp-soc.com for assistance.")
+			return
 		}
 	}
 
