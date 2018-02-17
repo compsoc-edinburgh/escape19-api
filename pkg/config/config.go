@@ -11,6 +11,9 @@ type Config struct {
 
 	// Mailgun
 	Mailgun MailgunConfig
+
+	// Pass
+	StatsPass string `required:"true"`
 }
 
 // StripeConfig contains all configuration data for a CoSign connection

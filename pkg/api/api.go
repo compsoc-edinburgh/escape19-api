@@ -5,6 +5,7 @@ import (
 
 	"github.com/compsoc-edinburgh/infball-api/pkg/api/base"
 	"github.com/compsoc-edinburgh/infball-api/pkg/api/charge"
+	"github.com/compsoc-edinburgh/infball-api/pkg/api/stats"
 	"github.com/compsoc-edinburgh/infball-api/pkg/api/ticket"
 	"github.com/compsoc-edinburgh/infball-api/pkg/config"
 	"github.com/gin-contrib/cors"
@@ -41,6 +42,9 @@ func NewAPI(
 	ticket := ticket.Impl{API: a}
 	router.GET("/ticket", ticket.Get)
 	router.POST("/ticket", ticket.Post)
+
+	stats := stats.Impl{API: a}
+	router.GET("/stats", stats.Get)
 
 	return a
 }
