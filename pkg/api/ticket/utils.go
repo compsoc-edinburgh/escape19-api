@@ -35,6 +35,10 @@ func (i *Impl) getOrder(orderID string) (*stripe.Order, error) {
 		return nil, errInvalidOrder
 	}
 
+	if order.Status != stripe.StatusPaid {
+		return nil, errors.New("This order must be paid for.")
+	}
+
 	return order, nil
 }
 
