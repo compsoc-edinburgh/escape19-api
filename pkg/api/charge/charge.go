@@ -151,6 +151,10 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 			msg = stripeErr.Msg
 		}
 
+		i.Stripe.Orders.Update(order.ID, &stripe.OrderUpdateParams{
+			Status: stripe.StatusCanceled,
+		})
+
 		base.BadRequest(c, msg)
 		return
 	}
