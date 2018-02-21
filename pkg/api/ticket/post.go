@@ -66,7 +66,9 @@ func (i *Impl) Post(c *gin.Context) {
 	}
 
 	authToken := result.AuthToken
+	newToken := false
 	if order.Meta["owner_email"] != result.Email {
+		newToken = true
 		authToken = uuid.New().String()
 	}
 
@@ -87,8 +89,10 @@ func (i *Impl) Post(c *gin.Context) {
 		return
 	}
 
-	if !base.SendTicketEmail(c, i.Mailgun, result.FullName, toAddress, order.ID, authToken) {
-		return
+	if newToken {
+		if !base.SendTicketEmail(c, i.Mailgun, result.FullName, toAddress, order.ID, authToken) {
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
