@@ -5,6 +5,7 @@ import (
 
 	"github.com/compsoc-edinburgh/infball-api/pkg/api/base"
 	"github.com/compsoc-edinburgh/infball-api/pkg/api/charge"
+	"github.com/compsoc-edinburgh/infball-api/pkg/api/list"
 	"github.com/compsoc-edinburgh/infball-api/pkg/api/stats"
 	"github.com/compsoc-edinburgh/infball-api/pkg/api/ticket"
 	"github.com/compsoc-edinburgh/infball-api/pkg/config"
@@ -45,6 +46,9 @@ func NewAPI(
 
 	stats := stats.Impl{API: a}
 	router.GET("/stats", stats.Get)
+
+	list := list.Impl{API: a}
+	router.GET("/list", list.Get)
 
 	return a
 }
