@@ -14,6 +14,9 @@ type Config struct {
 
 	// Pass
 	StatsPass string `required:"true"`
+
+	// Staff Code
+	StaffCode string `required:"true"`
 }
 
 // StripeConfig contains all configuration data for a CoSign connection

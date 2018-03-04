@@ -23,7 +23,8 @@ func isOneOf(one string, other ...string) bool {
 
 func (i *Impl) MakeCharge(c *gin.Context) {
 	var result struct {
-		Token string
+		Token     string
+		StaffCode string // special code
 
 		FullName    string
 		UUN         string
@@ -37,6 +38,11 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 
 	if err := c.BindJSON(&result); err != nil {
 		base.BadRequest(c, err.Error())
+		return
+	}
+
+	if result.StaffCode != i.Config.StaffCode {
+		base.BadRequest(c, "Invalid code provided.")
 		return
 	}
 
