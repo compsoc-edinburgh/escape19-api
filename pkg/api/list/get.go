@@ -63,6 +63,7 @@ func (i *Impl) Get(c *gin.Context) {
 			o.Meta["owner_name"], o.Meta["owner_email"],
 			o.Meta["uun"],
 			o.Meta["meal_starter"], o.Meta["meal_main"], o.Meta["meal_dessert"],
+			o.Meta["meal"],
 			o.Meta["special_requests"],
 			o.Meta["purchaser_name"], o.Meta["purchaser_email"],
 			o.Meta["over18"],
