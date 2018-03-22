@@ -34,7 +34,6 @@ func (i *Impl) Get(c *gin.Context) {
 		"owner_name", "owner_email",
 		"uun",
 		"meal_starter", "meal_main", "meal_dessert",
-		"meal",
 		"special_requests",
 		"purchaser_name", "purchaser_email",
 		"over18",
