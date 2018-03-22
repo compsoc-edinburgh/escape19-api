@@ -101,7 +101,7 @@ func IsOneOf(one string, other ...string) bool {
 }
 
 func IsMealValid(starter, main, dessert string) bool {
-	return IsOneOf(starter, "soup", "salmon", "pork") &&
-		IsOneOf(main, "beef", "salmon", "chicken", "mushrooms") &&
-		IsOneOf(dessert, "brownie", "toffee")
+	return IsOneOf(starter, "soup", "pork") &&
+		IsOneOf(main, "beef", "mushrooms") &&
+		IsOneOf(dessert, "brownie")
 }
