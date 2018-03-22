@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/mail"
 	"strconv"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/stripe/stripe-go"
@@ -60,7 +61,7 @@ func (i *Impl) Post(c *gin.Context) {
 		return
 	}
 
-	if order.Meta["auth_token"] != result.AuthToken {
+	if order.Meta["auth_token"] != strings.TrimSpace(result.AuthToken) {
 		base.BadRequest(c, "Authorisation token does not match the code provided in your email.")
 		return
 	}
@@ -79,7 +80,7 @@ func (i *Impl) Post(c *gin.Context) {
 		return
 	}
 
-	authToken := result.AuthToken
+	authToken := order.Meta["auth_token"]
 	newToken := false
 	if order.Meta["owner_email"] != result.Email {
 		newToken = true
