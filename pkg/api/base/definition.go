@@ -90,3 +90,18 @@ func CheckUUN(c *gin.Context, uun string) (success bool) {
 
 	return true
 }
+
+func IsOneOf(one string, other ...string) bool {
+	for _, v := range other {
+		if v == one {
+			return true
+		}
+	}
+	return false
+}
+
+func IsMealValid(starter, main, dessert string) bool {
+	return IsOneOf(starter, "soup", "salmon", "pork") &&
+		IsOneOf(main, "beef", "salmon", "chicken", "mushrooms") &&
+		IsOneOf(dessert, "brownie", "toffee")
+}

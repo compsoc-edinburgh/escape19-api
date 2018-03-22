@@ -12,15 +12,6 @@ import (
 	"github.com/stripe/stripe-go/currency"
 )
 
-func isOneOf(one string, other ...string) bool {
-	for _, v := range other {
-		if v == one {
-			return true
-		}
-	}
-	return false
-}
-
 func (i *Impl) MakeCharge(c *gin.Context) {
 	var result struct {
 		Token     string
@@ -72,7 +63,7 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 		return
 	}
 
-	if !isOneOf(result.Starter, "soup", "salmon", "pork") || !isOneOf(result.Main, "beef", "salmon", "chicken", "mushrooms") || !isOneOf(result.Dessert, "brownie", "toffee") {
+	if !base.IsMealValid(result.Starter, result.Main, result.Dessert) {
 		base.BadRequest(c, "Invalid food selection.")
 		return
 	}
