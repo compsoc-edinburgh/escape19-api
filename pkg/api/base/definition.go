@@ -51,15 +51,6 @@ func BadRequest(c *gin.Context, msg string) {
 	})
 }
 
-func IsOneOf(one string, other ...string) bool {
-	for _, v := range other {
-		if v == one {
-			return true
-		}
-	}
-	return false
-}
-
 func StripeError(err error) string {
 	msg := err.Error()
 	if stripeErr, ok := err.(*stripe.Error); ok {

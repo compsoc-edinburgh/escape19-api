@@ -17,12 +17,10 @@ func (i *Impl) Post(c *gin.Context) {
 		OrderID   string
 		AuthToken string
 
-		FullName    string
-		UUN         string
-		Email       string
-		Over18      bool
-		Meal        string
-		SpecialReqs string
+		FullName string
+		UUN      string
+		Email    string
+		Over18   bool
 	}
 
 	if err := c.BindJSON(&result); err != nil {
@@ -52,16 +50,6 @@ func (i *Impl) Post(c *gin.Context) {
 		return
 	}
 
-	if !base.IsOneOf(result.Meal, "1", "2", "3") {
-		base.BadRequest(c, "Invalid food selection.")
-		return
-	}
-
-	if len(result.SpecialReqs) > 500 {
-		base.BadRequest(c, "Sorry, your request is limited to 500 characters. Please email infball@comp-soc.com for assistance.")
-		return
-	}
-
 	order, err := i.getOrder(result.OrderID)
 	if err != nil {
 		base.BadRequest(c, base.StripeError(err))
@@ -87,13 +75,11 @@ func (i *Impl) Post(c *gin.Context) {
 	_, err = i.Stripe.Orders.Update(order.ID, &stripe.OrderUpdateParams{
 		Params: stripe.Params{
 			Meta: map[string]string{
-				"owner_email":      result.Email,
-				"owner_name":       result.FullName,
-				"uun":              result.UUN,
-				"over18":           strconv.FormatBool(result.Over18),
-				"meal":             result.Meal,
-				"special_requests": result.SpecialReqs,
-				"auth_token":       authToken,
+				"owner_email": result.Email,
+				"owner_name":  result.FullName,
+				"uun":         result.UUN,
+				"over18":      strconv.FormatBool(result.Over18),
+				"auth_token":  authToken,
 			},
 		},
 	})

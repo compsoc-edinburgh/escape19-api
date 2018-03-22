@@ -10,7 +10,7 @@ import (
 var exposableKeys = []string{
 	"purchaser_email", "owner_email",
 	"purchaser_name", "owner_name",
-	"meal",
+	"meal_dessert", "meal_main", "meal_starter",
 	"over18", "uun", "special_requests",
 }
 

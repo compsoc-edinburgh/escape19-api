@@ -12,6 +12,15 @@ import (
 	"github.com/stripe/stripe-go/currency"
 )
 
+func isOneOf(one string, other ...string) bool {
+	for _, v := range other {
+		if v == one {
+			return true
+		}
+	}
+	return false
+}
+
 func (i *Impl) MakeCharge(c *gin.Context) {
 	var result struct {
 		Token     string
@@ -21,7 +30,9 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 		UUN         string
 		Email       string
 		Over18      bool
-		Meal        string
+		Starter     string
+		Main        string
+		Dessert     string
 		SpecialReqs string
 	}
 
@@ -61,7 +72,7 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 		return
 	}
 
-	if !base.IsOneOf(result.Meal, "1", "2", "3") {
+	if !isOneOf(result.Starter, "soup", "salmon", "pork") || !isOneOf(result.Main, "beef", "salmon", "chicken", "mushrooms") || !isOneOf(result.Dessert, "brownie", "toffee") {
 		base.BadRequest(c, "Invalid food selection.")
 		return
 	}
@@ -111,7 +122,9 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 				"owner_email":      result.Email,
 				"owner_name":       result.FullName,
 				"over18":           strconv.FormatBool(result.Over18),
-				"meal":             result.Meal,
+				"meal_starter":     result.Starter,
+				"meal_main":        result.Main,
+				"meal_dessert":     result.Dessert,
 				"special_requests": result.SpecialReqs,
 				"auth_token":       authToken,
 			},
