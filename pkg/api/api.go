@@ -3,14 +3,14 @@ package api
 import (
 	"gopkg.in/mailgun/mailgun-go.v1"
 
-	"github.com/compsoc-edinburgh/infball-api/pkg/api/base"
-	"github.com/compsoc-edinburgh/infball-api/pkg/api/charge"
-	"github.com/compsoc-edinburgh/infball-api/pkg/api/list"
-	"github.com/compsoc-edinburgh/infball-api/pkg/api/stats"
-	"github.com/compsoc-edinburgh/infball-api/pkg/api/ticket"
-	"github.com/compsoc-edinburgh/infball-api/pkg/config"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/qaisjp/infball-api/pkg/api/base"
+	"github.com/qaisjp/infball-api/pkg/api/charge"
+	"github.com/qaisjp/infball-api/pkg/api/list"
+	"github.com/qaisjp/infball-api/pkg/api/stats"
+	"github.com/qaisjp/infball-api/pkg/api/ticket"
+	"github.com/qaisjp/infball-api/pkg/config"
 	"github.com/sirupsen/logrus"
 	"github.com/stripe/stripe-go/client"
 )

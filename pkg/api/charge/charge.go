@@ -5,9 +5,9 @@ import (
 	"net/mail"
 	"strconv"
 
-	"github.com/compsoc-edinburgh/infball-api/pkg/api/base"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/qaisjp/infball-api/pkg/api/base"
 	stripe "github.com/stripe/stripe-go"
 	"github.com/stripe/stripe-go/currency"
 )

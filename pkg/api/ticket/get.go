@@ -3,8 +3,8 @@ package ticket
 import (
 	"net/http"
 
-	"github.com/compsoc-edinburgh/infball-api/pkg/api/base"
 	"github.com/gin-gonic/gin"
+	"github.com/qaisjp/infball-api/pkg/api/base"
 )
 
 var exposableKeys = []string{
