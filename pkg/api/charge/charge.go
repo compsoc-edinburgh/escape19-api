@@ -9,7 +9,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/qaisjp/infball-api/pkg/api/base"
 	stripe "github.com/stripe/stripe-go"
-	"github.com/stripe/stripe-go/currency"
 )
 
 func (i *Impl) MakeCharge(c *gin.Context) {
@@ -98,15 +97,15 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 	authToken := uuid.New().String()
 
 	order, err := i.Stripe.Orders.New(&stripe.OrderParams{
-		Currency: currency.GBP,
+		Currency: stripe.String(string(stripe.CurrencyGBP)),
 		Items: []*stripe.OrderItemParams{
 			&stripe.OrderItemParams{
-				Type:   "sku",
-				Parent: i.Config.Stripe.SKU,
+				Type:   stripe.String(string(stripe.OrderItemTypeSKU)),
+				Parent: stripe.String(i.Config.Stripe.SKU),
 			},
 		},
 		Params: stripe.Params{
-			Meta: map[string]string{
+			Metadata: map[string]string{
 				"uun":              result.UUN,
 				"purchaser_email":  result.Email,
 				"purchaser_name":   result.FullName,
@@ -120,7 +119,7 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 				"auth_token":       authToken,
 			},
 		},
-		Email: result.Email,
+		Email: stripe.String(result.Email),
 	})
 
 	if err != nil {
@@ -149,7 +148,7 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 		}
 
 		i.Stripe.Orders.Update(order.ID, &stripe.OrderUpdateParams{
-			Status: stripe.StatusCanceled,
+			Status: stripe.String(string(stripe.OrderStatusCanceled)),
 		})
 
 		base.BadRequest(c, msg)
@@ -157,7 +156,7 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 	}
 
 	go i.Stripe.Charges.Update(o.Charge.ID, &stripe.ChargeParams{
-		Desc: "Informatics Ball Ticket",
+		Description: stripe.String("Informatics Ball Ticket"),
 	})
 
 	if !base.SendTicketEmail(c, i.Mailgun, result.FullName, toAddress, o.ID, authToken) {

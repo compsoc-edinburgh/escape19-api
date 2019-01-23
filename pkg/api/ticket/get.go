@@ -25,7 +25,7 @@ func (i *Impl) Get(c *gin.Context) {
 
 	data := make(map[string]string)
 	for _, key := range exposableKeys {
-		data[key] = order.Meta[key]
+		data[key] = order.Metadata[key]
 	}
 
 	c.JSON(http.StatusOK, gin.H{

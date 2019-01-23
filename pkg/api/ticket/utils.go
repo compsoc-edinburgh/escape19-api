@@ -25,7 +25,8 @@ func (i *Impl) getOrder(orderID string) (*stripe.Order, error) {
 	hasSKU := false
 
 	for _, item := range order.Items {
-		if item.Parent == i.Config.Stripe.SKU {
+		// todo: check if item.Parent always exists
+		if item.Parent.ID == i.Config.Stripe.SKU {
 			hasSKU = true
 			break
 		}
@@ -35,8 +36,8 @@ func (i *Impl) getOrder(orderID string) (*stripe.Order, error) {
 		return nil, errInvalidOrder
 	}
 
-	if order.Status != stripe.StatusPaid {
-		return nil, errors.New("This order must be paid for.")
+	if order.Status != string(stripe.OrderStatusPaid) {
+		return nil, errors.New("This order must be paid for")
 	}
 
 	return order, nil

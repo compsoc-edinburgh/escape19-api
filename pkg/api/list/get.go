@@ -20,7 +20,7 @@ func (i *Impl) Get(c *gin.Context) {
 	}
 
 	params := &stripe.OrderListParams{}
-	params.Expand("data.charge.balance_transaction")
+	params.AddExpand("data.charge.balance_transaction")
 	params.Filters.AddFilter("status", "", "paid")
 
 	// day before orders went out, utc timestamp
@@ -48,7 +48,8 @@ func (i *Impl) Get(c *gin.Context) {
 
 		hasSKU := false
 		for _, item := range o.Items {
-			if item.Parent == i.Config.Stripe.SKU {
+			// todo: check if item.Parent always exists
+			if item.Parent.ID == i.Config.Stripe.SKU {
 				hasSKU = true
 			}
 		}
@@ -59,15 +60,15 @@ func (i *Impl) Get(c *gin.Context) {
 
 		writer.Write([]string{
 			o.ID,
-			o.Meta["owner_name"], o.Meta["owner_email"],
-			o.Meta["uun"],
-			o.Meta["meal_starter"], o.Meta["meal_main"], o.Meta["meal_dessert"],
-			o.Meta["special_requests"],
-			o.Meta["purchaser_name"], o.Meta["purchaser_email"],
-			o.Meta["over18"],
-			o.Meta["auth_token"],
-			strconv.FormatInt(o.Charge.Tx.Net, 10),
-			strconv.FormatInt(o.Charge.Tx.Fee, 10),
+			o.Metadata["owner_name"], o.Metadata["owner_email"],
+			o.Metadata["uun"],
+			o.Metadata["meal_starter"], o.Metadata["meal_main"], o.Metadata["meal_dessert"],
+			o.Metadata["special_requests"],
+			o.Metadata["purchaser_name"], o.Metadata["purchaser_email"],
+			o.Metadata["over18"],
+			o.Metadata["auth_token"],
+			strconv.FormatInt(o.Charge.BalanceTransaction.Net, 10),
+			strconv.FormatInt(o.Charge.BalanceTransaction.Fee, 10),
 		})
 	}
 

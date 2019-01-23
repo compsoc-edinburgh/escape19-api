@@ -61,7 +61,7 @@ func (i *Impl) Post(c *gin.Context) {
 		return
 	}
 
-	if order.Meta["auth_token"] != strings.TrimSpace(result.AuthToken) {
+	if order.Metadata["auth_token"] != strings.TrimSpace(result.AuthToken) {
 		base.BadRequest(c, "Authorisation token does not match the code provided in your email.")
 		return
 	}
@@ -80,16 +80,16 @@ func (i *Impl) Post(c *gin.Context) {
 		return
 	}
 
-	authToken := order.Meta["auth_token"]
+	authToken := order.Metadata["auth_token"]
 	newToken := false
-	if order.Meta["owner_email"] != result.Email {
+	if order.Metadata["owner_email"] != result.Email {
 		newToken = true
 		authToken = uuid.New().String()
 	}
 
 	_, err = i.Stripe.Orders.Update(order.ID, &stripe.OrderUpdateParams{
 		Params: stripe.Params{
-			Meta: map[string]string{
+			Metadata: map[string]string{
 				"uun":         result.UUN,
 				"owner_email": result.Email,
 				"owner_name":  result.FullName,
