@@ -15,7 +15,7 @@ type EmailStruct struct {
 	OrderID   string
 }
 
-var Email = template.Must(template.New("ball-email").ParseFiles("email.html"))
+var Email *template.Template = template.Must(template.ParseFiles("email.html"))
 
 func SendTicketEmail(c *gin.Context, mailgun mailgun.Mailgun, name, to_address, orderID, authToken string) (_ bool) {
 	var tpl bytes.Buffer
