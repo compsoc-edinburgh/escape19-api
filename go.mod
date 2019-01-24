@@ -1,4 +1,4 @@
-module github.com/qaisjp/infball-api
+module github.com/compsoc-edinburgh/sigint-escape-api-2018
 
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect

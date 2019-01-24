@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/qaisjp/infball-api/pkg/api/base"
+	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/api/base"
 	stripe "github.com/stripe/stripe-go"
 )
 

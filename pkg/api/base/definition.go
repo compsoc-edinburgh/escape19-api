@@ -8,7 +8,7 @@ import (
 
 	"github.com/badoux/checkmail"
 	"github.com/gin-gonic/gin"
-	"github.com/qaisjp/infball-api/pkg/config"
+	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/config"
 	"github.com/sirupsen/logrus"
 	stripe "github.com/stripe/stripe-go"
 	"github.com/stripe/stripe-go/client"

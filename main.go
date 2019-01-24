@@ -7,8 +7,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/qaisjp/infball-api/pkg/api"
-	"github.com/qaisjp/infball-api/pkg/config"
+	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/api"
+	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/config"
 	"github.com/sirupsen/logrus"
 
 	"github.com/koding/multiconfig"
