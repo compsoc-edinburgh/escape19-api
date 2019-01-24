@@ -30,8 +30,8 @@ func SendTicketEmail(c *gin.Context, mailgun mailgun.Mailgun, name, to_address, 
 	}
 
 	message := mailgun.NewMessage(
-		"Informatics Ball <infball@comp-soc.com>",
-		"Your Informatics Ball ticket! [#"+orderID+"]",
+		"SIGINT <comtact@sigint.mx>",
+		"Escape Room with SIGINT ticket! [#"+orderID+"]",
 		"",
 		to_address,
 	)
