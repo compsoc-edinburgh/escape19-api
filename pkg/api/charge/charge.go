@@ -5,9 +5,9 @@ import (
 	"net/mail"
 	"strconv"
 
+	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/api/base"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/api/base"
 	stripe "github.com/stripe/stripe-go"
 )
 
@@ -31,10 +31,10 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 		return
 	}
 
-	if result.StaffCode != i.Config.StaffCode {
-		base.BadRequest(c, "Invalid code provided.")
-		return
-	}
+	// if result.StaffCode != i.Config.StaffCode {
+	// 	base.BadRequest(c, "Invalid code provided.")
+	// 	return
+	// }
 
 	if result.Token == "" {
 		base.BadRequest(c, "Stripe token missing.")
@@ -58,19 +58,19 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 		return
 	}
 
-	if !base.CheckUUN(c, result.UUN) {
-		return
-	}
+	// if !base.CheckUUN(c, result.UUN) {
+	// 	return
+	// }
 
-	if !base.IsMealValid(result.Starter, result.Main, result.Dessert) {
-		base.BadRequest(c, "Invalid food selection.")
-		return
-	}
+	// if !base.IsMealValid(result.Starter, result.Main, result.Dessert) {
+	// 	base.BadRequest(c, "Invalid food selection.")
+	// 	return
+	// }
 
-	if len(result.SpecialReqs) > 500 {
-		base.BadRequest(c, "Sorry, your request is limited to 500 characters. Please email infball@comp-soc.com for assistance.")
-		return
-	}
+	// if len(result.SpecialReqs) > 500 {
+	// 	base.BadRequest(c, "Sorry, your request is limited to 500 characters. Please email infball@comp-soc.com for assistance.")
+	// 	return
+	// }
 
 	sku, err := i.Stripe.Skus.Get(i.Config.Stripe.SKU, nil)
 	if err != nil {
@@ -85,6 +85,8 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 		})
 		return
 	}
+
+	// fmt.Printf("%+v", sku.Inventory)
 
 	if sku.Inventory.Quantity == 0 {
 		c.JSON(http.StatusGone, gin.H{
@@ -106,17 +108,17 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 		},
 		Params: stripe.Params{
 			Metadata: map[string]string{
-				"uun":              result.UUN,
-				"purchaser_email":  result.Email,
-				"purchaser_name":   result.FullName,
-				"owner_email":      result.Email,
-				"owner_name":       result.FullName,
-				"over18":           strconv.FormatBool(result.Over18),
-				"meal_starter":     result.Starter,
-				"meal_main":        result.Main,
-				"meal_dessert":     result.Dessert,
-				"special_requests": result.SpecialReqs,
-				"auth_token":       authToken,
+				"uun":             result.UUN,
+				"purchaser_email": result.Email,
+				"purchaser_name":  result.FullName,
+				"owner_email":     result.Email,
+				"owner_name":      result.FullName,
+				"over18":          strconv.FormatBool(result.Over18),
+				// "meal_starter":     result.Starter,
+				// "meal_main":        result.Main,
+				// "meal_dessert":     result.Dessert,
+				// "special_requests": result.SpecialReqs,
+				"auth_token": authToken,
 			},
 		},
 		Email: stripe.String(result.Email),
@@ -156,7 +158,7 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 	}
 
 	go i.Stripe.Charges.Update(o.Charge.ID, &stripe.ChargeParams{
-		Description: stripe.String("Informatics Ball Ticket"),
+		Description: stripe.String("SIGINT Escape Room Ticket"),
 	})
 
 	if !base.SendTicketEmail(c, i.Mailgun, result.FullName, toAddress, o.ID, authToken) {
