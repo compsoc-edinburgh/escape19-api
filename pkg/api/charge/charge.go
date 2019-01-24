@@ -3,7 +3,6 @@ package charge
 import (
 	"net/http"
 	"net/mail"
-	"strconv"
 
 	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/api/base"
 	"github.com/gin-gonic/gin"
@@ -13,17 +12,17 @@ import (
 
 func (i *Impl) MakeCharge(c *gin.Context) {
 	var result struct {
-		Token     string
-		StaffCode string // special code
+		Token string
+		// StaffCode string // special code
 
-		FullName    string
-		UUN         string
-		Email       string
-		Over18      bool
-		Starter     string
-		Main        string
-		Dessert     string
-		SpecialReqs string
+		FullName string
+		// UUN         string
+		Email string
+		// Over18      bool
+		// Starter     string
+		// Main        string
+		// Dessert     string
+		// SpecialReqs string
 	}
 
 	if err := c.BindJSON(&result); err != nil {
@@ -41,10 +40,10 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 		return
 	}
 
-	if !result.Over18 {
-		base.BadRequest(c, "You must be atleast 18 years of age to attend.")
-		return
-	}
+	// if !result.Over18 {
+	// 	base.BadRequest(c, "You must be atleast 18 years of age to attend.")
+	// 	return
+	// }
 
 	if result.FullName == "" {
 		base.BadRequest(c, "Full name missing.")
@@ -108,12 +107,12 @@ func (i *Impl) MakeCharge(c *gin.Context) {
 		},
 		Params: stripe.Params{
 			Metadata: map[string]string{
-				"uun":             result.UUN,
+				// "uun":             result.UUN,
 				"purchaser_email": result.Email,
 				"purchaser_name":  result.FullName,
 				"owner_email":     result.Email,
 				"owner_name":      result.FullName,
-				"over18":          strconv.FormatBool(result.Over18),
+				// "over18":          strconv.FormatBool(result.Over18),
 				// "meal_starter":     result.Starter,
 				// "meal_main":        result.Main,
 				// "meal_dessert":     result.Dessert,
