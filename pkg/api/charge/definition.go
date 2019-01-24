@@ -1,6 +1,6 @@
 package charge
 
-import "github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/api/base"
+import "github.com/compsoc-edinburgh/escape19-api/pkg/api/base"
 
 // Impl is the implementation of the CoSign module
 type Impl struct {

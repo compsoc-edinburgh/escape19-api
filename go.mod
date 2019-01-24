@@ -1,4 +1,4 @@
-module github.com/compsoc-edinburgh/sigint-escape-api-2018
+module github.com/compsoc-edinburgh/escape19-api
 
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect

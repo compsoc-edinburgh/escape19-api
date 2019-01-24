@@ -7,8 +7,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/api"
-	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/config"
+	"github.com/compsoc-edinburgh/escape19-api/pkg/api"
+	"github.com/compsoc-edinburgh/escape19-api/pkg/config"
 	"github.com/sirupsen/logrus"
 
 	"github.com/koding/multiconfig"

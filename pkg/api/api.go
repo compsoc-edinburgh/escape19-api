@@ -3,14 +3,14 @@ package api
 import (
 	"gopkg.in/mailgun/mailgun-go.v1"
 
+	"github.com/compsoc-edinburgh/escape19-api/pkg/api/base"
+	"github.com/compsoc-edinburgh/escape19-api/pkg/api/charge"
+	"github.com/compsoc-edinburgh/escape19-api/pkg/api/list"
+	"github.com/compsoc-edinburgh/escape19-api/pkg/api/stats"
+	"github.com/compsoc-edinburgh/escape19-api/pkg/api/ticket"
+	"github.com/compsoc-edinburgh/escape19-api/pkg/config"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/api/base"
-	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/api/charge"
-	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/api/list"
-	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/api/stats"
-	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/api/ticket"
-	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/config"
 	"github.com/sirupsen/logrus"
 	"github.com/stripe/stripe-go/client"
 )

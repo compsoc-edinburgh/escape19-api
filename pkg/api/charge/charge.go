@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"net/mail"
 
-	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/api/base"
+	"github.com/compsoc-edinburgh/escape19-api/pkg/api/base"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	stripe "github.com/stripe/stripe-go"

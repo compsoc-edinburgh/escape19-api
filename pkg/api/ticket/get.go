@@ -3,8 +3,8 @@ package ticket
 import (
 	"net/http"
 
+	"github.com/compsoc-edinburgh/escape19-api/pkg/api/base"
 	"github.com/gin-gonic/gin"
-	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/api/base"
 )
 
 var exposableKeys = []string{

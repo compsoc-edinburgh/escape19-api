@@ -9,8 +9,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/stripe/stripe-go"
 
+	"github.com/compsoc-edinburgh/escape19-api/pkg/api/base"
 	"github.com/gin-gonic/gin"
-	"github.com/compsoc-edinburgh/sigint-escape-api-2018/pkg/api/base"
 )
 
 func (i *Impl) Post(c *gin.Context) {
